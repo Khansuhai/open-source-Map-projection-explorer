@@ -98,15 +98,20 @@ npm run preview
 
 ## 🗺️ Roadmap
 
-- [x] **Phase 1: Shelf Browser & 2D Vector Preview** *(Current)*
+- [x] **Phase 1: Shelf Browser & 2D Vector Preview**
   - Filterable card grid by family & property
   - Live SVG rendering for 24 projections with Natural Earth TopoJSON
   - Detail overlay with rich cartographic metadata & keyboard navigation
-- [ ] **Phase 2: Recipe Engine**
-  - Wizard recommending projections based on mapping goal, region, and purpose
-- [ ] **Phase 3: 3D Globe Unwrap Animation**
-  - Three.js globe that unwraps into flat 2D projections
-- [ ] **Phase 4: Compare Mode & Tissot's Indicatrix**
+- [x] **Phase 2: Mix Station Verdict Engine**
+  - Interactive recipe variable selector (multi-select properties, family, aspect, scope, location, purpose)
+  - Real-time rule evaluation into 4 verdicts: *Impossible Dish* 🚫, *Clashing Dish* 💥, *Workable Dish* 🥣, *Great Dish* 🌟
+  - Hard Kitchen Law: *Conformal + Equal-Area = Impossible Dish*
+  - "Try this instead" suggestion cards linked directly to Phase 1 detail view
+- [x] **Phase 3: Distortion Lab & Perspective Morphing**
+  - Interactive Tissot's indicatrix grid (15° lat × 15° lon)
+  - Surface case controls (*Tangent* 1 line vs *Secant* 2 lines) and Aspect controls
+  - Continuous 4-stop Azimuthal perspective morphing slider (*Gnomonic* ➔ *Stereographic* ➔ *General Perspective / Satellite* ➔ *Orthographic / Globe View*)
+- [ ] **Phase 4: Compare Mode & Ghosted Overlays**
   - Side-by-side projection distortion visualizer
 - [ ] **Phase 5: GitHub Pages Automation & Polish**
 

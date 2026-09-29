@@ -11,6 +11,8 @@ import {
 } from './catalog-loader';
 import { renderMap } from '../projections/map-renderer';
 import { getProjectionFactory } from '../projections/projection-registry';
+import { renderMixStation } from '../recipe/mix-station-ui';
+import { renderDistortionLab } from '../distortion/distortion-lab-ui';
 
 // ── State ────────────────────────────────────────────────────
 let currentFamily: FamilyId | 'all' = 'all';
@@ -64,6 +66,19 @@ function buildShellHTML(): string {
             <p class="tagline">An open-source map projection explorer</p>
           </div>
         </div>
+
+        <nav class="site-nav-tabs" id="site-nav-tabs">
+          <button type="button" class="site-nav-btn site-nav-btn--active" data-view="shelf">
+            <span class="nav-tab-icon">🍽️</span> The Shelf
+          </button>
+          <button type="button" class="site-nav-btn" data-view="mix">
+            <span class="nav-tab-icon">🧑‍🍳</span> Mix Station
+          </button>
+          <button type="button" class="site-nav-btn" data-view="lab">
+            <span class="nav-tab-icon">🔬</span> Distortion Lab
+          </button>
+        </nav>
+
         <div class="header-stats">
           <span class="stat-badge" id="projection-count">${allProjections.length} projections</span>
           <span class="stat-badge">${families.length} families</span>
@@ -72,67 +87,78 @@ function buildShellHTML(): string {
     </header>
 
     <main class="main-content">
-      <aside class="filter-panel" id="filter-panel">
-        <div class="filter-section">
-          <h3 class="filter-title">
-            <span class="filter-icon">🔍</span>
-            Search
-          </h3>
-          <input
-            type="text"
-            id="search-input"
-            class="search-input"
-            placeholder="Search projections…"
-            autocomplete="off"
-          />
-        </div>
+      <!-- ── View 1: The Shelf (Phase 1) ── -->
+      <div id="view-shelf" class="main-view-container main-view--active">
+        <div class="shelf-layout">
+          <aside class="filter-panel" id="filter-panel">
+            <div class="filter-section">
+              <h3 class="filter-title">
+                <span class="filter-icon">🔍</span>
+                Search
+              </h3>
+              <input
+                type="text"
+                id="search-input"
+                class="search-input"
+                placeholder="Search projections…"
+                autocomplete="off"
+              />
+            </div>
 
-        <div class="filter-section">
-          <h3 class="filter-title">
-            <span class="filter-icon">📂</span>
-            Surface Family
-          </h3>
-          <div class="filter-chips" id="family-filters">
-            <button class="chip chip--active" data-family="all">All</button>
-            ${families
-              .map(
-                (f) =>
-                  `<button class="chip" data-family="${f.id}" style="--chip-color: ${familyColors[f.id] ?? 'var(--color-accent)'}">
-                    <span class="chip-icon">${familyIcons[f.id] ?? '📁'}</span>
-                    ${f.name}
-                  </button>`
-              )
-              .join('')}
-          </div>
-        </div>
+            <div class="filter-section">
+              <h3 class="filter-title">
+                <span class="filter-icon">📂</span>
+                Surface Family
+              </h3>
+              <div class="filter-chips" id="family-filters">
+                <button class="chip chip--active" data-family="all">All</button>
+                ${families
+                  .map(
+                    (f) =>
+                      `<button class="chip" data-family="${f.id}" style="--chip-color: ${familyColors[f.id] ?? 'var(--color-accent)'}">
+                        <span class="chip-icon">${familyIcons[f.id] ?? '📁'}</span>
+                        ${f.name}
+                      </button>`
+                  )
+                  .join('')}
+              </div>
+            </div>
 
-        <div class="filter-section">
-          <h3 class="filter-title">
-            <span class="filter-icon">🎯</span>
-            Preserved Property
-          </h3>
-          <div class="filter-chips" id="property-filters">
-            <button class="chip chip--active" data-property="all">All</button>
-            ${propertyClasses
-              .map(
-                (p) =>
-                  `<button class="chip" data-property="${p.id}">
-                    <span class="chip-icon">${propertyIcons[p.id] ?? '📌'}</span>
-                    ${p.name}
-                  </button>`
-              )
-              .join('')}
-          </div>
-        </div>
-      </aside>
+            <div class="filter-section">
+              <h3 class="filter-title">
+                <span class="filter-icon">🎯</span>
+                Preserved Property
+              </h3>
+              <div class="filter-chips" id="property-filters">
+                <button class="chip chip--active" data-property="all">All</button>
+                ${propertyClasses
+                  .map(
+                    (p) =>
+                      `<button class="chip" data-property="${p.id}">
+                        <span class="chip-icon">${propertyIcons[p.id] ?? '📌'}</span>
+                        ${p.name}
+                      </button>`
+                  )
+                  .join('')}
+              </div>
+            </div>
+          </aside>
 
-      <section class="card-area">
-        <div class="card-area-header">
-          <h2 id="results-heading">All Projections</h2>
-          <span class="result-count" id="result-count">${allProjections.length} results</span>
+          <section class="card-area">
+            <div class="card-area-header">
+              <h2 id="results-heading">All Projections</h2>
+              <span class="result-count" id="result-count">${allProjections.length} results</span>
+            </div>
+            <div class="card-grid" id="card-grid"></div>
+          </section>
         </div>
-        <div class="card-grid" id="card-grid"></div>
-      </section>
+      </div>
+
+      <!-- ── View 2: Mix Station (Phase 2) ── -->
+      <div id="view-mix" class="main-view-container" style="display: none;"></div>
+
+      <!-- ── View 3: Distortion Lab (Phase 3) ── -->
+      <div id="view-lab" class="main-view-container" style="display: none;"></div>
     </main>
 
     <!-- Detail overlay -->
@@ -299,6 +325,32 @@ function bindFilterEvents(): void {
       openDetail(next.id);
     }
   });
+
+  // Top navigation tabs
+  const navTabs = document.getElementById('site-nav-tabs');
+  navTabs?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.site-nav-btn');
+    if (!btn) return;
+    const view = btn.dataset.view;
+    if (!view) return;
+
+    navTabs.querySelectorAll('.site-nav-btn').forEach((b) => b.classList.remove('site-nav-btn--active'));
+    btn.classList.add('site-nav-btn--active');
+
+    const shelfContainer = document.getElementById('view-shelf')!;
+    const mixContainer = document.getElementById('view-mix')!;
+    const labContainer = document.getElementById('view-lab')!;
+
+    shelfContainer.style.display = view === 'shelf' ? 'block' : 'none';
+    mixContainer.style.display = view === 'mix' ? 'block' : 'none';
+    labContainer.style.display = view === 'lab' ? 'block' : 'none';
+
+    if (view === 'mix') {
+      renderMixStation(mixContainer);
+    } else if (view === 'lab') {
+      renderDistortionLab(labContainer);
+    }
+  });
 }
 
 function updateChipStates(container: HTMLElement, dataAttr: string, activeValue: string): void {
@@ -414,7 +466,7 @@ async function renderCardPreview(projId: string): Promise<void> {
   }
 }
 
-async function openDetail(projId: string): Promise<void> {
+export async function openDetail(projId: string): Promise<void> {
   const proj = allProjections.find((p) => p.id === projId);
   if (!proj) return;
 

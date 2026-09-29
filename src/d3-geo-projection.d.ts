@@ -3,7 +3,7 @@
 declare module 'd3-geo-projection' {
   import type { GeoProjection } from 'd3-geo';
 
-  export function geoCylindricalEqualArea(): GeoProjection;
+  export function geoCylindricalEqualArea(): GeoProjection & { parallel(phi: number): GeoProjection };
   export function geoMiller(): GeoProjection;
   export function geoPolyconic(): GeoProjection;
   export function geoSinusoidal(): GeoProjection;

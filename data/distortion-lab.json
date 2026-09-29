@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "title": "3D to 2D Dish - Distortion Lab Configuration",
+    "description": "Parameters and mathematical definitions for Tissot Indicatrices, developable surface cases, and perspective transitions",
+    "version": "1.0.0"
+  },
+  "gridSettings": {
+    "stepLatitude": 15,
+    "stepLongitude": 15,
+    "circleRadiusDegrees": 3.0,
+    "circleSegments": 64
+  },
+  "distortionMeasures": {
+    "areaScale": {
+      "id": "areaScale",
+      "name": "Area Distortion (s)",
+      "formula": "s = a · b",
+      "explanation": "Ratio of the area of the infinitesimal ellipse of distortion to that of the infinitesimal circle on the sphere. Equal-area projections maintain s = 1.0 everywhere."
+    },
+    "angularDeformation": {
+      "id": "angularDeformation",
+      "name": "Maximum Angular Deformation (2ω)",
+      "formula": "sin(ω) = (a - b) / (a + b)",
+      "explanation": "Maximum alteration in the angle between any two intersecting directions. Conformal projections maintain 2ω = 0° (a = b) everywhere."
+    },
+    "scaleAlongMeridian": {
+      "id": "scaleAlongMeridian",
+      "name": "Meridian Scale Factor (h)",
+      "explanation": "Scale factor along the meridian passing through the point."
+    },
+    "scaleAlongParallel": {
+      "id": "scaleAlongParallel",
+      "name": "Parallel Scale Factor (k)",
+      "explanation": "Scale factor along the parallel of latitude passing through the point."
+    }
+  },
+  "aspectByFamily": {
+    "cylindrical": [
+      { "id": "normal", "label": "Normal (Equatorial)", "tangentLine": "Equator (0°)", "secantParallels": "±30° or ±45°" },
+      { "id": "transverse", "label": "Transverse (Meridional)", "tangentLine": "Central Meridian", "secantParallels": "Secant cylinder parallel to meridian" },
+      { "id": "oblique", "label": "Oblique (Great Circle)", "tangentLine": "Any Great Circle", "secantParallels": "Secant parallel band" }
+    ],
+    "conic": [
+      { "id": "normal", "label": "Normal (Polar Apex)", "tangentLine": "One Standard Parallel (e.g. 45°N)", "secantParallels": "Two Standard Parallels (e.g. 33°N & 45°N)" },
+      { "id": "oblique", "label": "Oblique (Tilted Cone)", "tangentLine": "Tilted Standard Parallel", "secantParallels": "Two tilted standard circles" }
+    ],
+    "azimuthal": [
+      { "id": "polar", "label": "Polar (North/South Pole)", "tangentLine": "Pole Point (90°)", "secantParallels": "Small circle around pole (e.g. 80°)" },
+      { "id": "equatorial", "label": "Equatorial (Equator Center)", "tangentLine": "Equatorial Point (0°, 0°)", "secantParallels": "Small circle around center" },
+      { "id": "oblique", "label": "Oblique (Custom Center)", "tangentLine": "Center Latitude/Longitude", "secantParallels": "Small circle around custom center" }
+    ],
+    "pseudocylindrical": [
+      { "id": "normal", "label": "Normal (Equator & Central Meridian)", "tangentLine": "Equator", "secantParallels": "Standard parallels" }
+    ],
+    "compromise": [
+      { "id": "normal", "label": "Normal", "tangentLine": "Equator / Central Meridian", "secantParallels": "Selected balanced parallels" }
+    ]
+  },
+  "azimuthalPerspectiveType": [
+    {
+      "id": "gnomonic",
+      "name": "Gnomonic",
+      "position": 0.0,
+      "viewpoint": "Center of the Earth (Distance = 0)",
+      "d3Function": "geoGnomonic",
+      "property": "Great circles are straight lines (aviation/shipping routes)"
+    },
+    {
+      "id": "stereographic",
+      "name": "Stereographic",
+      "position": 0.33,
+      "viewpoint": "Antipodal point on surface (Distance = 1 radius)",
+      "d3Function": "geoStereographic",
+      "property": "Conformal; all circles on sphere remain circles on map"
+    },
+    {
+      "id": "general-perspective",
+      "name": "General Perspective",
+      "position": 0.66,
+      "viewpoint": "Finite altitude in orbit (e.g. 2 Earth radii)",
+      "d3Function": "geoSatellite",
+      "property": "True satellite viewpoint from space with adjustable horizon"
+    },
+    {
+      "id": "orthographic",
+      "name": "Orthographic",
+      "position": 1.0,
+      "viewpoint": "Infinite distance from Earth (Distance = ∞)",
+      "d3Function": "geoOrthographic",
+      "property": "Natural visual globe as seen from deep space"
+    }
+  ],
+  "cases": [
+    {
+      "id": "tangent",
+      "label": "Tangent Case",
+      "description": "Developable surface touches sphere along a single line (or point). Scale factor k = 1.0 along the line, increasing outward."
+    },
+    {
+      "id": "secant",
+      "label": "Secant Case",
+      "description": "Surface cuts through sphere, creating two lines (or a small circle) of zero distortion (k = 1.0). Scale factor is < 1 between lines, > 1 outside."
+    }
+  ]
+}

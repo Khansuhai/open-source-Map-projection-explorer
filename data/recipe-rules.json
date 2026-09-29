@@ -1,87 +1,252 @@
 {
   "meta": {
-    "title": "3D to 2D Dish - Recipe Recommendation Rules",
-    "description": "Deterministic scoring rules mapping user requirements to projection recommendations",
-    "version": "1.0.0"
+    "title": "3D to 2D Dish - Recipe & Mix Station Rules",
+    "description": "Rules evaluating user variable choices into cartographic dish verdicts",
+    "version": "2.0.0"
   },
-  "questions": [
-    {
-      "id": "extent",
-      "prompt": "What are you mapping?",
+  "verdicts": {
+    "impossible": {
+      "id": "impossible",
+      "name": "Impossible Dish",
+      "icon": "🚫",
+      "badgeClass": "verdict-impossible",
+      "color": "#ef5350"
+    },
+    "clashing": {
+      "id": "clashing",
+      "name": "Clashing Dish",
+      "icon": "💥",
+      "badgeClass": "verdict-clashing",
+      "color": "#ff9800"
+    },
+    "workable": {
+      "id": "workable",
+      "name": "Workable Dish",
+      "icon": "🥣",
+      "badgeClass": "verdict-workable",
+      "color": "#42a5f5"
+    },
+    "great": {
+      "id": "great",
+      "name": "Great Dish",
+      "icon": "🌟",
+      "badgeClass": "verdict-great",
+      "color": "#66bb6a"
+    }
+  },
+  "defaultVerdict": {
+    "verdict": "workable",
+    "explanation": "This mix is workable. While it may have slight compromises in either angular fidelity or peripheral scale, it will produce a functional cartographic presentation for general purposes."
+  },
+  "variables": {
+    "property": {
+      "id": "property",
+      "label": "Preserved Property",
+      "description": "Select desired properties (can pick more than one)",
+      "isMulti": true,
+      "required": true,
       "options": [
-        { "id": "world", "label": "Whole world" },
+        { "id": "conformal", "label": "Conformal (true angles & local shapes)" },
+        { "id": "equal-area", "label": "Equal-Area (true size & area ratios)" },
+        { "id": "equidistant", "label": "Equidistant (true distance along key lines/points)" },
+        { "id": "true-direction", "label": "True-Direction (true azimuth from center)" },
+        { "id": "compromise", "label": "Compromise (balanced visual aesthetics)" }
+      ]
+    },
+    "family": {
+      "id": "family",
+      "label": "Surface Family",
+      "description": "Developable surface (optional)",
+      "isMulti": false,
+      "required": false,
+      "options": [
+        { "id": "any", "label": "Any / No preference" },
+        { "id": "cylindrical", "label": "Cylindrical" },
+        { "id": "conic", "label": "Conic" },
+        { "id": "azimuthal", "label": "Azimuthal (Planar)" },
+        { "id": "pseudocylindrical", "label": "Pseudocylindrical" },
+        { "id": "compromise", "label": "Compromise" }
+      ]
+    },
+    "aspect": {
+      "id": "aspect",
+      "label": "Aspect / Orientation",
+      "description": "Projection axis relative to Earth (optional)",
+      "isMulti": false,
+      "required": false,
+      "options": [
+        { "id": "any", "label": "Any / Standard" },
+        { "id": "normal", "label": "Normal (Equatorial or Polar apex)" },
+        { "id": "transverse", "label": "Transverse (Rotated 90° along meridian)" },
+        { "id": "oblique", "label": "Oblique (Centered on custom point)" },
+        { "id": "polar", "label": "Polar (Tangent at North or South Pole)" }
+      ]
+    },
+    "scope": {
+      "id": "scope",
+      "label": "Region Scope",
+      "description": "Geographic scale of your map",
+      "isMulti": false,
+      "required": true,
+      "options": [
+        { "id": "world", "label": "Whole World (Global)" },
         { "id": "continent", "label": "Continent" },
-        { "id": "country", "label": "Country" },
-        { "id": "region", "label": "Small region / local area" }
+        { "id": "country", "label": "Country / State" },
+        { "id": "local", "label": "Local / Narrow Zone / City" }
       ]
     },
-    {
-      "id": "priority",
-      "prompt": "What matters most?",
+    "location": {
+      "id": "location",
+      "label": "Location / Latitude",
+      "description": "Where the mapped area sits on the globe",
+      "isMulti": false,
+      "required": true,
       "options": [
-        { "id": "area", "label": "True area / size ratios", "property": "equal-area" },
-        { "id": "shape", "label": "True shape and local angles", "property": "conformal" },
-        { "id": "distance", "label": "True distance from a key point", "property": "equidistant" },
-        { "id": "direction", "label": "True direction / compass bearing from a center", "property": "true-direction" },
-        { "id": "balance", "label": "A visually balanced general appearance", "property": "compromise" }
-      ]
-    },
-    {
-      "id": "latitude",
-      "prompt": "Where is your study area situated?",
-      "options": [
-        { "id": "equatorial", "label": "Equatorial / tropical zone" },
-        { "id": "mid-latitude", "label": "Mid-latitudes (e.g. Europe, continental US, East Asia)" },
+        { "id": "equatorial", "label": "Equatorial / Tropics" },
+        { "id": "mid-latitude", "label": "Mid-Latitudes (e.g. Europe, US, Asia)" },
         { "id": "polar", "label": "Polar (Arctic or Antarctic)" }
       ]
     },
-    {
+    "purpose": {
       "id": "purpose",
-      "prompt": "What is the primary purpose of your map?",
+      "label": "Mapping Purpose",
+      "description": "Primary intended cartographic use",
+      "isMulti": false,
+      "required": true,
       "options": [
-        { "id": "thematic", "label": "Thematic / statistical choropleth" },
-        { "id": "navigation", "label": "Marine or aeronautical navigation" },
-        { "id": "topographic", "label": "Topographic surveying / engineering" },
-        { "id": "web", "label": "Interactive web / slippy map" },
-        { "id": "atlas", "label": "Print atlas / general reference" }
+        { "id": "thematic", "label": "Thematic / Statistical Choropleth" },
+        { "id": "navigation", "label": "Navigation (Marine, Aviation)" },
+        { "id": "topographic", "label": "Topographic Surveying / Engineering" },
+        { "id": "web", "label": "Interactive Web Map / Slippy Tiles" },
+        { "id": "atlas", "label": "General Reference / Print Atlas" }
       ]
     }
-  ],
+  },
   "rules": [
     {
-      "condition": { "priority": "area", "extent": "world" },
-      "recommendations": ["mollweide", "eckert-iv", "lambert-cylindrical-equal-area", "goode-homolosine", "sinusoidal"],
-      "explanation": "For global equal-area mapping, pseudocylindrical forms like Mollweide or Eckert IV preserve proportional sizes across continents."
+      "id": "hard-conformal-equal-area",
+      "condition": {
+        "property": ["conformal", "equal-area"]
+      },
+      "verdict": "impossible",
+      "explanation": "Hard Law of the Kitchen: A map projection cannot be conformal AND equal-area at the same time. Preserving local angular relationships requires stretching scale equally in all directions (a = b), while preserving relative area requires the product of scale factors to equal unity (a · b = 1). When shapes distort to preserve area, angles must bend. You must choose whether shape or area matters most.",
+      "suggest": ["albers-equal-area-conic", "lambert-conformal-conic", "winkel-tripel"]
     },
     {
-      "condition": { "priority": "area", "latitude": "mid-latitude" },
-      "recommendations": ["albers-equal-area-conic", "lambert-azimuthal-equal-area"],
-      "explanation": "Albers Equal-Area Conic is the gold standard for mid-latitude country or continental equal-area mapping (e.g. US Census Bureau)."
+      "id": "mercator-thematic-clash",
+      "condition": {
+        "property": "conformal",
+        "scope": "world",
+        "purpose": "thematic"
+      },
+      "verdict": "clashing",
+      "explanation": "Clashing Dish: Using a global conformal projection (like Mercator) for thematic choropleth maps misleads readers severely by exaggerating high-latitude land areas (Greenland appears the size of Africa when Africa is actually 14x larger). For global statistics or choropleths, an equal-area recipe is essential.",
+      "suggest": ["mollweide", "eckert-iv", "equal-earth", "lambert-cylindrical-equal-area"]
     },
     {
-      "condition": { "priority": "shape", "extent": "region" },
-      "recommendations": ["utm", "transverse-mercator"],
-      "explanation": "Universal Transverse Mercator (UTM) provides conformal, low-distortion site and regional mapping with scale distortion below 0.1% within each zone."
+      "id": "conic-polar-clash",
+      "condition": {
+        "family": "conic",
+        "location": "polar"
+      },
+      "verdict": "clashing",
+      "explanation": "Clashing Dish: Conic projections place the apex of the cone beyond the pole, producing severe convergence and distortion at extreme polar latitudes. For polar regions, planar (azimuthal) projections centered on the pole provide natural circular symmetry and minimum distortion.",
+      "suggest": ["stereographic", "lambert-azimuthal-equal-area", "azimuthal-equidistant"]
     },
     {
-      "condition": { "priority": "shape", "latitude": "mid-latitude" },
-      "recommendations": ["lambert-conformal-conic"],
-      "explanation": "Lambert Conformal Conic preserves local angles and directions across mid-latitude bands with wide east-west extent."
+      "id": "conic-equatorial-clash",
+      "condition": {
+        "family": "conic",
+        "location": "equatorial"
+      },
+      "verdict": "clashing",
+      "explanation": "Clashing Dish: Conic surfaces cannot wrap effectively around the equator without degenerating into an infinitely tall cone. Cylindrical projections are far better matched to equatorial bands.",
+      "suggest": ["mercator", "plate-carree", "lambert-cylindrical-equal-area"]
     },
     {
-      "condition": { "latitude": "polar" },
-      "recommendations": ["stereographic", "lambert-azimuthal-equal-area", "azimuthal-equidistant"],
-      "explanation": "Azimuthal projections in polar aspect are standard for Arctic and Antarctic sea-ice and cryosphere data."
+      "id": "cylindrical-polar-clash",
+      "condition": {
+        "family": "cylindrical",
+        "location": "polar"
+      },
+      "verdict": "clashing",
+      "explanation": "Clashing Dish: Normal cylindrical projections stretch meridians infinitely (Mercator) or compress parallels to extreme slivers at the poles. Never serve a polar map on a normal cylinder.",
+      "suggest": ["stereographic", "lambert-azimuthal-equal-area", "orthographic"]
     },
     {
-      "condition": { "priority": "balance", "extent": "world" },
-      "recommendations": ["winkel-tripel", "natural-earth", "robinson"],
-      "explanation": "Compromise projections distribute minor distortion across area and shape to deliver a harmonious, familiar world outline."
+      "id": "albers-midlat-great",
+      "condition": {
+        "property": "equal-area",
+        "family": "conic",
+        "location": "mid-latitude"
+      },
+      "verdict": "great",
+      "explanation": "Great Dish: Albers Equal-Area Conic is the gold-standard recipe for mid-latitude countries with predominantly east-west extent (such as the United States or Central Europe). True area is maintained everywhere, with near-zero angular distortion between standard parallels.",
+      "suggest": ["albers-equal-area-conic"]
     },
     {
-      "condition": { "priority": "distance" },
-      "recommendations": ["azimuthal-equidistant", "equidistant-conic"],
-      "explanation": "Azimuthal Equidistant preserves true scale from the map center point to every other location."
+      "id": "lambert-conformal-midlat-great",
+      "condition": {
+        "property": "conformal",
+        "family": "conic",
+        "location": "mid-latitude"
+      },
+      "verdict": "great",
+      "explanation": "Great Dish: Lambert Conformal Conic is the premier choice for mid-latitude aviation charts, meteorological mapping, and state coordinate systems (SPCS). True local shapes and angles are impeccably preserved across broad east-west corridors.",
+      "suggest": ["lambert-conformal-conic"]
+    },
+    {
+      "id": "polar-azimuthal-great",
+      "condition": {
+        "family": "azimuthal",
+        "location": "polar"
+      },
+      "verdict": "great",
+      "explanation": "Great Dish: Azimuthal projections in polar aspect provide an unobstructed, circular view of sea ice, polar routes, and cryosphere dynamics. Direction from the pole is true along every straight meridian.",
+      "suggest": ["stereographic", "lambert-azimuthal-equal-area", "azimuthal-equidistant"]
+    },
+    {
+      "id": "utm-local-engineering-great",
+      "condition": {
+        "property": "conformal",
+        "scope": "local",
+        "purpose": "topographic"
+      },
+      "verdict": "great",
+      "explanation": "Great Dish: Universal Transverse Mercator (UTM) or Transverse Mercator is the engineering industry benchmark. Secant cylinder geometry keeps scale distortion under 0.04% to 0.1% within each 6° zone, making it ideal for cadastral surveying and engineering.",
+      "suggest": ["utm", "transverse-mercator"]
+    },
+    {
+      "id": "pseudocylindrical-global-thematic-great",
+      "condition": {
+        "property": "equal-area",
+        "scope": "world",
+        "purpose": "thematic"
+      },
+      "verdict": "great",
+      "explanation": "Great Dish: Pseudocylindrical projections like Mollweide or Eckert IV preserve proportional geographic areas across all continents while curving outer meridians gently to avoid the severe shearing seen in rectangular cylindrical maps.",
+      "suggest": ["mollweide", "eckert-iv", "sinusoidal", "goode-homolosine"]
+    },
+    {
+      "id": "compromise-global-atlas-great",
+      "condition": {
+        "property": "compromise",
+        "scope": "world",
+        "purpose": "atlas"
+      },
+      "verdict": "great",
+      "explanation": "Great Dish: Winkel Tripel and Robinson are time-tested compromise projections (used by National Geographic) that balance area and angular distortions simultaneously, yielding a visually graceful and natural-looking global atlas plate.",
+      "suggest": ["winkel-tripel", "natural-earth", "robinson"]
+    },
+    {
+      "id": "azimuthal-equidistant-direction-great",
+      "condition": {
+        "property": "true-direction",
+        "family": "azimuthal"
+      },
+      "verdict": "great",
+      "explanation": "Great Dish: Azimuthal Equidistant preserves both true bearing and true distance from its center point to every other location on the planet (famously featured on the United Nations emblem).",
+      "suggest": ["azimuthal-equidistant"]
     }
   ]
 }

@@ -1,0 +1,292 @@
+{
+  "meta": {
+    "title": "3D to 2D Dish - Projection Catalog",
+    "reference": "Classification per Snyder (1987) Map Projections: A Working Manual (USGS), and standard GIS cartography texts.",
+    "note": "epsg fields are left null where a projection is parameterized per study area rather than having one universal code (e.g. Albers, Lambert Conformal Conic). Fill those in per deployment."
+  },
+  "propertyClasses": [
+    { "id": "conformal", "name": "Conformal", "preserves": "local angles and shapes", "distorts": "area" },
+    { "id": "equal-area", "name": "Equal-Area", "preserves": "area / size ratios", "distorts": "shape and angle" },
+    { "id": "equidistant", "name": "Equidistant", "preserves": "true distance from one point or along specific lines", "distorts": "everything away from those lines" },
+    { "id": "true-direction", "name": "True-Direction (Azimuthal)", "preserves": "true bearing from one center point", "distorts": "distance and shape away from center" },
+    { "id": "compromise", "name": "Compromise (Aphylactic)", "preserves": "an overall visual balance", "distorts": "a little of everything, deliberately" }
+  ],
+  "families": [
+    {
+      "id": "cylindrical",
+      "name": "Cylindrical",
+      "surface": "Cylinder tangent or secant to a great circle (usually the equator; a meridian in transverse aspect)",
+      "bestFor": ["navigation", "narrow north-south strips", "web slippy maps"],
+      "projections": [
+        {
+          "id": "mercator",
+          "name": "Mercator",
+          "property": "conformal",
+          "aspect": "normal",
+          "year": 1569,
+          "author": "Gerardus Mercator",
+          "epsg": "EPSG:3857 (spherical Web Mercator variant used by web map tiles)",
+          "bestFor": ["marine navigation", "web maps"],
+          "distortionNote": "Area exaggerates severely poleward (Greenland reads far larger than its true ~14x-smaller size vs Africa); local angles stay true, which is why rhumb lines are straight."
+        },
+        {
+          "id": "transverse-mercator",
+          "name": "Transverse Mercator",
+          "property": "conformal",
+          "aspect": "transverse",
+          "epsg": null,
+          "bestFor": ["narrow north-south zones", "basis for UTM"],
+          "distortionNote": "Same conformal math as Mercator, rotated so the tangent line runs along a meridian instead of the equator."
+        },
+        {
+          "id": "utm",
+          "name": "Universal Transverse Mercator (UTM)",
+          "property": "conformal",
+          "aspect": "transverse, secant",
+          "epsg": "EPSG:326xx (north) / 327xx (south), per zone",
+          "bestFor": ["topographic mapping", "engineering surveys", "national mapping grids"],
+          "distortionNote": "Conformal, not equal-area. Earth split into 60 six-degree-wide zones; each zone is a secant transverse Mercator, keeping scale distortion under about 0.1% within the zone."
+        },
+        {
+          "id": "lambert-cylindrical-equal-area",
+          "name": "Lambert Cylindrical Equal-Area",
+          "property": "equal-area",
+          "aspect": "normal",
+          "year": 1772,
+          "author": "Johann Heinrich Lambert",
+          "epsg": null,
+          "bestFor": ["equal-area world thematic maps"],
+          "distortionNote": "True area everywhere, but shapes stretch severely near the poles. The Gall-Peters projection is a secant variant (standard parallels ~45deg), popularized in the 1970s 'fair map' debate."
+        },
+        {
+          "id": "plate-carree",
+          "name": "Plate Carree (Equirectangular)",
+          "property": "equidistant",
+          "aspect": "normal",
+          "epsg": "EPSG:4326 used loosely as this grid",
+          "bestFor": ["raw satellite/raster grids", "simplest possible reference frame"],
+          "distortionNote": "x = longitude, y = latitude, directly. Only true to scale along the equator (or chosen standard parallel); everything else stretches."
+        },
+        {
+          "id": "miller-cylindrical",
+          "name": "Miller Cylindrical",
+          "property": "compromise",
+          "aspect": "normal",
+          "epsg": null,
+          "bestFor": ["general reference maps wanting a Mercator look with less polar exaggeration"],
+          "distortionNote": "A modified Mercator; reduces but does not eliminate polar area exaggeration, and is not truly conformal."
+        }
+      ]
+    },
+    {
+      "id": "conic",
+      "name": "Conic",
+      "surface": "Cone over the globe, tangent (one standard parallel) or secant (two), apex over a pole",
+      "bestFor": ["mid-latitude regions with east-west extent"],
+      "projections": [
+        {
+          "id": "lambert-conformal-conic",
+          "name": "Lambert Conformal Conic",
+          "property": "conformal",
+          "aspect": "normal, usually secant",
+          "epsg": null,
+          "bestFor": ["aeronautical charts", "mid-latitude countries (continental US, Europe)"],
+          "distortionNote": "True local shape/angle between the two standard parallels; widely used as the basis for many national grid systems."
+        },
+        {
+          "id": "albers-equal-area-conic",
+          "name": "Albers Equal-Area Conic",
+          "property": "equal-area",
+          "aspect": "normal, usually secant",
+          "epsg": null,
+          "bestFor": ["national/regional thematic and statistical maps"],
+          "distortionNote": "The standard US Census Bureau choice for country-wide choropleth maps; true area, shape drifts away from the standard parallels."
+        },
+        {
+          "id": "equidistant-conic",
+          "name": "Equidistant Conic",
+          "property": "equidistant",
+          "aspect": "normal",
+          "epsg": null,
+          "bestFor": ["regional maps where along-meridian distance accuracy matters"],
+          "distortionNote": "True distance along meridians and along the standard parallels."
+        },
+        {
+          "id": "polyconic",
+          "name": "American Polyconic",
+          "property": "compromise",
+          "aspect": "normal",
+          "epsg": null,
+          "bestFor": ["historical interest: early USGS topographic quadrangles"],
+          "distortionNote": "Each parallel is its own true-to-scale cone rather than a single consistent conic surface; low distortion near the central meridian, not strictly conformal or equal-area."
+        }
+      ]
+    },
+    {
+      "id": "azimuthal",
+      "name": "Azimuthal (Planar)",
+      "surface": "Flat plane touching the globe at a single point (or secant to a small circle around it)",
+      "bestFor": ["polar regions", "distance/direction from one specific point"],
+      "projections": [
+        {
+          "id": "azimuthal-equidistant",
+          "name": "Azimuthal Equidistant",
+          "property": "equidistant",
+          "aspect": "polar, oblique, or equatorial",
+          "epsg": null,
+          "bestFor": ["distance-from-a-point maps", "seismology / epicenter maps", "the UN emblem (polar aspect)"],
+          "distortionNote": "True distance AND true direction from the single center point only; both degrade with distance from center."
+        },
+        {
+          "id": "lambert-azimuthal-equal-area",
+          "name": "Lambert Azimuthal Equal-Area",
+          "property": "equal-area",
+          "aspect": "polar, oblique, or equatorial",
+          "epsg": null,
+          "bestFor": ["continental thematic maps", "polar sea-ice / cryosphere products (EASE-Grid family)"],
+          "distortionNote": "True area from the center outward; shape distorts increasingly toward the map's edge."
+        },
+        {
+          "id": "stereographic",
+          "name": "Stereographic",
+          "property": "conformal",
+          "aspect": "polar, oblique, or equatorial",
+          "epsg": null,
+          "bestFor": ["Arctic / Antarctic mapping", "polar cryosphere and sea-ice datasets"],
+          "distortionNote": "True local shape/angle everywhere; area exaggerates away from the center point."
+        },
+        {
+          "id": "orthographic",
+          "name": "Orthographic",
+          "property": "compromise",
+          "aspect": "any",
+          "epsg": null,
+          "bestFor": ["a natural 'photo from space' globe view - good default starting view for a globe-to-flat animation"],
+          "distortionNote": "Perspective from infinite distance; only the center point is distortion-free, everything toward the limb compresses."
+        },
+        {
+          "id": "gnomonic",
+          "name": "Gnomonic",
+          "property": "compromise",
+          "aspect": "any",
+          "epsg": null,
+          "bestFor": ["great-circle route planning for aviation and shipping"],
+          "distortionNote": "Perspective from the Earth's center; every great circle, including all meridians, renders as a straight line. Cannot show a full hemisphere."
+        },
+        {
+          "id": "general-perspective",
+          "name": "General Perspective (near-side)",
+          "property": "compromise",
+          "aspect": "any",
+          "epsg": null,
+          "bestFor": ["satellite-view style renderings with an adjustable viewing altitude"],
+          "distortionNote": "Perspective from a finite height above the surface; a good UI slider parameter (altitude) for the 3D globe view."
+        }
+      ]
+    },
+    {
+      "id": "pseudocylindrical",
+      "name": "Pseudocylindrical",
+      "surface": "Parallels are straight horizontal lines like cylindrical, but meridians curve toward the poles",
+      "bestFor": ["whole-world equal-area thematic maps"],
+      "projections": [
+        {
+          "id": "sinusoidal",
+          "name": "Sinusoidal (Sanson-Flamsteed)",
+          "property": "equal-area",
+          "aspect": "normal",
+          "epsg": null,
+          "bestFor": ["one of the oldest equal-area world map projections"],
+          "distortionNote": "Parallels equally spaced and straight; meridians are sine curves. Shape distorts increasingly away from the central meridian and equator."
+        },
+        {
+          "id": "mollweide",
+          "name": "Mollweide",
+          "property": "equal-area",
+          "aspect": "normal",
+          "epsg": null,
+          "bestFor": ["global raster and astronomical all-sky data visualization"],
+          "distortionNote": "Elliptical world outline; true area everywhere, shape compresses near the outline's edges."
+        },
+        {
+          "id": "eckert-iv",
+          "name": "Eckert IV",
+          "property": "equal-area",
+          "aspect": "normal",
+          "epsg": null,
+          "bestFor": ["thematic atlases wanting a rounded, visually balanced equal-area map"],
+          "distortionNote": "True area with rounded meridians for a softer visual than Sinusoidal or Mollweide."
+        },
+        {
+          "id": "robinson",
+          "name": "Robinson",
+          "property": "compromise",
+          "aspect": "normal",
+          "epsg": null,
+          "bestFor": ["general-reference world maps prioritizing pleasing appearance"],
+          "distortionNote": "Not truly equal-area or conformal; was National Geographic's standard world map from 1988 to 1998, chosen for overall visual balance rather than any single true property."
+        },
+        {
+          "id": "goode-homolosine",
+          "name": "Goode Homolosine",
+          "property": "equal-area",
+          "aspect": "normal, interrupted",
+          "epsg": null,
+          "bestFor": ["true land-area comparison across continents"],
+          "distortionNote": "Splices Sinusoidal (low latitudes) and Mollweide (high latitudes), usually interrupted into ocean-centered or land-centered 'orange peel' lobes."
+        }
+      ]
+    },
+    {
+      "id": "compromise",
+      "name": "Compromise",
+      "surface": "Not derived from a single literal developable surface; mathematically balances several distortions at once",
+      "bestFor": ["general-purpose whole-world reference maps"],
+      "projections": [
+        {
+          "id": "winkel-tripel",
+          "name": "Winkel Tripel",
+          "property": "compromise",
+          "aspect": "normal",
+          "year": 1921,
+          "author": "Oswald Winkel",
+          "epsg": null,
+          "bestFor": ["National Geographic's standard world map since 1998"],
+          "distortionNote": "Minimizes combined area, angle, and distance distortion simultaneously rather than perfecting any one of them."
+        },
+        {
+          "id": "van-der-grinten",
+          "name": "Van der Grinten",
+          "property": "compromise",
+          "aspect": "normal",
+          "epsg": null,
+          "bestFor": ["historical interest: NGS's standard world map from 1922 to 1988"],
+          "distortionNote": "Circular world outline; area distortion at high latitudes is nearly as severe as Mercator, despite the different look."
+        },
+        {
+          "id": "natural-earth",
+          "name": "Natural Earth (Patterson)",
+          "property": "compromise",
+          "aspect": "normal",
+          "year": 2007,
+          "author": "Tom Patterson",
+          "epsg": null,
+          "bestFor": ["default general-reference world map in many modern open-source GIS tools"],
+          "distortionNote": "Purpose-built in the 2000s specifically to look good as a general-purpose reference map, not to satisfy any single classical property."
+        }
+      ]
+    }
+  ],
+  "stretchGoals": [
+    {
+      "id": "retroazimuthal",
+      "name": "Retroazimuthal family",
+      "note": "Preserves true direction TO a fixed point rather than from it (e.g. Craig Retroazimuthal / Qibla-finder maps). Niche; flagged as a Phase 2+ catalog extension."
+    },
+    {
+      "id": "polyhedral-interrupted",
+      "name": "Polyhedral / interrupted family",
+      "note": "Dymaxion (Fuller), AuthaGraph, and similar. Visually striking but complex to render; flagged as a Phase 2+ catalog extension."
+    }
+  ]
+}

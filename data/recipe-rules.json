@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "title": "3D to 2D Dish - Recipe Recommendation Rules",
+    "description": "Deterministic scoring rules mapping user requirements to projection recommendations",
+    "version": "1.0.0"
+  },
+  "questions": [
+    {
+      "id": "extent",
+      "prompt": "What are you mapping?",
+      "options": [
+        { "id": "world", "label": "Whole world" },
+        { "id": "continent", "label": "Continent" },
+        { "id": "country", "label": "Country" },
+        { "id": "region", "label": "Small region / local area" }
+      ]
+    },
+    {
+      "id": "priority",
+      "prompt": "What matters most?",
+      "options": [
+        { "id": "area", "label": "True area / size ratios", "property": "equal-area" },
+        { "id": "shape", "label": "True shape and local angles", "property": "conformal" },
+        { "id": "distance", "label": "True distance from a key point", "property": "equidistant" },
+        { "id": "direction", "label": "True direction / compass bearing from a center", "property": "true-direction" },
+        { "id": "balance", "label": "A visually balanced general appearance", "property": "compromise" }
+      ]
+    },
+    {
+      "id": "latitude",
+      "prompt": "Where is your study area situated?",
+      "options": [
+        { "id": "equatorial", "label": "Equatorial / tropical zone" },
+        { "id": "mid-latitude", "label": "Mid-latitudes (e.g. Europe, continental US, East Asia)" },
+        { "id": "polar", "label": "Polar (Arctic or Antarctic)" }
+      ]
+    },
+    {
+      "id": "purpose",
+      "prompt": "What is the primary purpose of your map?",
+      "options": [
+        { "id": "thematic", "label": "Thematic / statistical choropleth" },
+        { "id": "navigation", "label": "Marine or aeronautical navigation" },
+        { "id": "topographic", "label": "Topographic surveying / engineering" },
+        { "id": "web", "label": "Interactive web / slippy map" },
+        { "id": "atlas", "label": "Print atlas / general reference" }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "condition": { "priority": "area", "extent": "world" },
+      "recommendations": ["mollweide", "eckert-iv", "lambert-cylindrical-equal-area", "goode-homolosine", "sinusoidal"],
+      "explanation": "For global equal-area mapping, pseudocylindrical forms like Mollweide or Eckert IV preserve proportional sizes across continents."
+    },
+    {
+      "condition": { "priority": "area", "latitude": "mid-latitude" },
+      "recommendations": ["albers-equal-area-conic", "lambert-azimuthal-equal-area"],
+      "explanation": "Albers Equal-Area Conic is the gold standard for mid-latitude country or continental equal-area mapping (e.g. US Census Bureau)."
+    },
+    {
+      "condition": { "priority": "shape", "extent": "region" },
+      "recommendations": ["utm", "transverse-mercator"],
+      "explanation": "Universal Transverse Mercator (UTM) provides conformal, low-distortion site and regional mapping with scale distortion below 0.1% within each zone."
+    },
+    {
+      "condition": { "priority": "shape", "latitude": "mid-latitude" },
+      "recommendations": ["lambert-conformal-conic"],
+      "explanation": "Lambert Conformal Conic preserves local angles and directions across mid-latitude bands with wide east-west extent."
+    },
+    {
+      "condition": { "latitude": "polar" },
+      "recommendations": ["stereographic", "lambert-azimuthal-equal-area", "azimuthal-equidistant"],
+      "explanation": "Azimuthal projections in polar aspect are standard for Arctic and Antarctic sea-ice and cryosphere data."
+    },
+    {
+      "condition": { "priority": "balance", "extent": "world" },
+      "recommendations": ["winkel-tripel", "natural-earth", "robinson"],
+      "explanation": "Compromise projections distribute minor distortion across area and shape to deliver a harmonious, familiar world outline."
+    },
+    {
+      "condition": { "priority": "distance" },
+      "recommendations": ["azimuthal-equidistant", "equidistant-conic"],
+      "explanation": "Azimuthal Equidistant preserves true scale from the map center point to every other location."
+    }
+  ]
+}

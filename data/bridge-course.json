@@ -1,0 +1,655 @@
+{
+  "meta": {
+    "title": "The Bridge Course",
+    "subtitle": "From Globe to Flat Map — The Complete Classification Guide",
+    "description": "An interactive, in-depth guide to understanding map projection classification. Covers the full GIS coordinate system hierarchy, the three axes of projection classification (surface family × preserved property × aspect), the ESRI/Snyder taxonomy, decision flowcharts, and how to use this portal effectively.",
+    "version": "1.0.0",
+    "references": [
+      { "id": "snyder1987", "label": "Snyder (1987), Map Projections: A Working Manual, USGS PP 1395" },
+      { "id": "esri-docs", "label": "ESRI ArcGIS Pro — Coordinate Systems & Map Projections Documentation" },
+      { "id": "ics-utwente", "label": "ITC / University of Twente — Cartography textbook on projection classification" },
+      { "id": "wiki-proj", "label": "Wikipedia — Map projection" }
+    ]
+  },
+
+  "chapters": [
+    {
+      "id": "welcome",
+      "title": "How to Use This Portal",
+      "icon": "🧭",
+      "color": "#7c8cf5",
+      "sections": [
+        {
+          "id": "portal-overview",
+          "title": "What Each Tab Does",
+          "type": "guide-cards",
+          "cards": [
+            {
+              "icon": "🍽️",
+              "title": "The Shelf",
+              "description": "Browse all 24 projections as filterable cards. Filter by surface family (cylindrical, conic, azimuthal…) or preserved property (conformal, equal-area…). Click any card to see a live d3-geo rendered map, metadata, and distortion notes.",
+              "color": "#7c8cf5"
+            },
+            {
+              "icon": "🧑‍🍳",
+              "title": "Mix Station",
+              "description": "The recipe engine. Tell the app what you're mapping, what matters most (area? shape? direction?), where it is, and what it's for. The engine scores all 24 projections and serves you a verdict: Great, Workable, Clashing, or Impossible — with suggested alternatives.",
+              "color": "#ba68c8"
+            },
+            {
+              "icon": "🔬",
+              "title": "Distortion Lab",
+              "description": "Visualize Tissot's Indicatrix — small geodesic circles that deform into ellipses showing exactly where and how a projection distorts. Toggle tangent/secant case, change aspect (normal/transverse/oblique), and slide the azimuthal perspective continuum from Gnomonic → Stereographic → Satellite → Orthographic.",
+              "color": "#4dd0e1"
+            },
+            {
+              "icon": "🎓",
+              "title": "Bridge Course (You Are Here)",
+              "description": "The conceptual backbone. Interactive family trees, classification charts, glossary, and zoom-out diagrams that show how every projection in this portal fits into the bigger GIS picture — from coordinate systems all the way down to individual projection parameters.",
+              "color": "#81c784"
+            }
+          ]
+        },
+        {
+          "id": "reading-order",
+          "title": "Suggested Reading Order",
+          "type": "steps",
+          "steps": [
+            { "number": 1, "title": "Start here in the Bridge Course", "detail": "Read Chapter 1 (Coordinate Systems) and Chapter 2 (The Three Axes) to build the mental model." },
+            { "number": 2, "title": "Browse the Shelf", "detail": "Open 'The Shelf' tab and explore projections by family. Click into a few cards — the metadata and distortion notes will make much more sense now." },
+            { "number": 3, "title": "Try the Mix Station", "detail": "Experiment with different mapping goals. Watch how changing 'area matters most' vs 'shape matters most' shifts the verdict. The rules connect directly to Chapter 2's classification." },
+            { "number": 4, "title": "Inspect in the Distortion Lab", "detail": "Pick a projection and see Tissot circles deform in real time. Compare a conformal projection (circles stay circular) to an equal-area one (circles become ellipses but maintain area)." },
+            { "number": 5, "title": "Return to the Bridge Course", "detail": "Re-read the Decision Flowchart (Chapter 4) with fresh eyes. You'll now have the visual intuition to pick the right projection for any mapping task." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "coordinate-systems",
+      "title": "Coordinate Systems in GIS",
+      "icon": "🌐",
+      "color": "#64b5f6",
+      "sections": [
+        {
+          "id": "hierarchy-tree",
+          "title": "The GIS Coordinate System Hierarchy",
+          "type": "tree",
+          "description": "Every map in GIS starts with a coordinate system. Before you can project (flatten) the Earth, you must first define where things are on the 3D globe. This hierarchy shows how all the pieces fit together — from the broadest category down to specific parameters.",
+          "tree": {
+            "id": "cs",
+            "label": "Coordinate Systems in GIS",
+            "icon": "🌍",
+            "children": [
+              {
+                "id": "hcs",
+                "label": "Horizontal Coordinate Systems (HCS)",
+                "icon": "↔️",
+                "description": "Define position across the Earth's surface (latitude/longitude or x/y)",
+                "children": [
+                  {
+                    "id": "gcs",
+                    "label": "Geographic Coordinate System (GCS)",
+                    "icon": "🌐",
+                    "description": "3D angular reference on the ellipsoid. Uses latitude & longitude in degrees.",
+                    "children": [
+                      { "id": "datum", "label": "Datum", "icon": "📍", "description": "Defines the size/shape of the ellipsoid and its position relative to the Earth (e.g., WGS 84, NAD 83)." },
+                      { "id": "ellipsoid", "label": "Spheroid / Ellipsoid", "icon": "🏈", "description": "Mathematical model of the Earth's shape. Not a perfect sphere — slightly flattened at the poles (e.g., WGS 84 ellipsoid, GRS 1980).", "children": [
+                        { "id": "angular-unit", "label": "Angular Unit", "icon": "📐", "description": "The unit for measuring angles — almost always decimal degrees." }
+                      ]},
+                      { "id": "prime-meridian", "label": "Prime Meridian", "icon": "🧭", "description": "The zero line of longitude. Usually Greenwich (0°), but historically varied." }
+                    ]
+                  },
+                  {
+                    "id": "pcs",
+                    "label": "Projected Coordinate System (PCS)",
+                    "icon": "🗺️",
+                    "description": "2D flat reference. Always inherits a GCS, then adds a map projection + parameters.",
+                    "highlight": true,
+                    "children": [
+                      { "id": "inherit-gcs", "label": "Inherits a GCS", "icon": "🔗", "description": "Every PCS is built on top of a GCS. You can't project without first fixing a datum, ellipsoid, and prime meridian." },
+                      { "id": "map-projection", "label": "Map Projection", "icon": "🗞️", "description": "The mathematical algorithm that converts 3D angular coordinates to 2D planar coordinates. This is the core topic of this portal.", "children": [
+                        { "id": "by-surface", "label": "Classified by Developable Surface", "icon": "📐", "description": "Cylindrical, Conic, Azimuthal, Pseudocylindrical, Compromise" },
+                        { "id": "by-property", "label": "Classified by Preserved Property", "icon": "🎯", "description": "Conformal, Equal-Area, Equidistant, True-Direction, Compromise" },
+                        { "id": "by-aspect", "label": "Classified by Aspect", "icon": "🔄", "description": "Normal, Transverse, Oblique" }
+                      ]},
+                      { "id": "proj-params", "label": "Projection Parameters", "icon": "⚙️", "description": "Settings like standard parallels, central meridian, false easting/northing, scale factor." },
+                      { "id": "linear-unit", "label": "Linear Unit", "icon": "📏", "description": "The unit for measuring on the flat map — meters, feet, etc." }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "vcs",
+                "label": "Vertical Coordinate Systems (VCS)",
+                "icon": "↕️",
+                "description": "Define height/elevation above a reference surface",
+                "children": [
+                  {
+                    "id": "v-datum",
+                    "label": "Vertical Datum",
+                    "icon": "📍",
+                    "description": "The reference surface for measuring height.",
+                    "children": [
+                      { "id": "ellipsoidal", "label": "Ellipsoidal (Geometric)", "icon": "📐", "description": "Height above the mathematical ellipsoid. Used by GPS directly." },
+                      { "id": "geoid", "label": "Gravity-Related (Geoid)", "icon": "🌊", "description": "Height above mean sea level (geoid). Used for most practical elevation data (e.g., EGM96, NAVD 88)." }
+                    ]
+                  },
+                  {
+                    "id": "v-shift",
+                    "label": "Vertical Shift",
+                    "icon": "⬆️",
+                    "description": "Transformation between vertical datums.",
+                    "children": [
+                      { "id": "direction", "label": "Direction", "icon": "↕️", "description": "Up or Down — whether the shift adds or subtracts elevation." },
+                      { "id": "v-linear-unit", "label": "Linear Unit", "icon": "📏", "description": "Meters, feet, etc." }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "key-insight",
+          "title": "The Key Insight",
+          "type": "callout",
+          "variant": "important",
+          "text": "A Projected Coordinate System (PCS) = Geographic Coordinate System (GCS) + Map Projection + Parameters. You can never project without first fixing a datum and ellipsoid. That's why the GCS arrow feeds into the PCS in every hierarchy diagram — it's not optional, it's inherited."
+        },
+        {
+          "id": "gcs-vs-pcs",
+          "title": "GCS vs. PCS — When to Use Which",
+          "type": "comparison-table",
+          "headers": ["", "Geographic (GCS)", "Projected (PCS)"],
+          "rows": [
+            ["Dimensions", "3D (angular)", "2D (planar)"],
+            ["Units", "Degrees (°)", "Meters, feet, etc."],
+            ["Shape", "On the curved ellipsoid", "On a flat plane / screen"],
+            ["Use for", "Global data storage, GPS, web services (WGS 84)", "Any measurement (area, distance), local maps, analysis"],
+            ["Example", "EPSG:4326 (WGS 84)", "EPSG:32635 (UTM Zone 35N)"],
+            ["Distortion", "None (it's on the real surface)", "Always present — you choose which kind"]
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "three-axes",
+      "title": "The Three Axes of Classification",
+      "icon": "🎯",
+      "color": "#ba68c8",
+      "sections": [
+        {
+          "id": "axes-intro",
+          "title": "Three Independent Dimensions",
+          "type": "callout",
+          "variant": "tip",
+          "text": "Every map projection can be classified along three independent axes: (1) by surface family — the geometric shape used to 'catch' the projected light, (2) by preserved property — what geometric truth the projection protects, and (3) by aspect — how the projection surface is oriented relative to the Earth's axis. These three axes are independent: any combination is theoretically possible, though not all are commonly used."
+        },
+        {
+          "id": "axis-surface",
+          "title": "Axis 1 — Surface Family (Developable Surface)",
+          "type": "taxonomy-cards",
+          "description": "The geometric shape onto which the globe is projected. Imagine shining a light from the center of a transparent globe onto a nearby surface — the shadow of the continents is your map.",
+          "cards": [
+            {
+              "id": "cylindrical",
+              "icon": "🗞️",
+              "name": "Cylindrical",
+              "color": "#64b5f6",
+              "surface": "Cylinder wrapped around the globe",
+              "graticule": "Parallels and meridians form a perpendicular grid of straight lines (in normal aspect)",
+              "bestFor": "Navigation, web maps, narrow N–S strips",
+              "weakness": "Extreme distortion near poles in normal aspect",
+              "examples": ["Mercator", "Transverse Mercator / UTM", "Lambert Cylindrical Equal-Area", "Gall–Peters", "Plate Carrée"],
+              "projectionCount": 8
+            },
+            {
+              "id": "conic",
+              "icon": "📐",
+              "name": "Conic",
+              "color": "#ba68c8",
+              "surface": "Cone placed over the globe",
+              "graticule": "Meridians radiate from a point; parallels are concentric arcs",
+              "bestFor": "Mid-latitude regions with east–west extent (US, Europe, Russia)",
+              "weakness": "Cannot show the whole world; distortion grows away from standard parallels",
+              "examples": ["Lambert Conformal Conic", "Albers Equal-Area Conic", "Equidistant Conic"],
+              "projectionCount": 3
+            },
+            {
+              "id": "azimuthal",
+              "icon": "🎯",
+              "name": "Azimuthal (Planar)",
+              "color": "#4dd0e1",
+              "surface": "Flat plane touching the globe at one point",
+              "graticule": "Meridians radiate from center; parallels are concentric circles (polar aspect)",
+              "bestFor": "Polar regions, single-city distance maps, hemisphere views",
+              "weakness": "Only the center point has zero distortion; distortion increases outward in all directions",
+              "examples": ["Stereographic", "Orthographic", "Gnomonic", "Azimuthal Equidistant", "Lambert Azimuthal Equal-Area"],
+              "projectionCount": 6
+            },
+            {
+              "id": "pseudocylindrical",
+              "icon": "🌊",
+              "name": "Pseudocylindrical",
+              "color": "#81c784",
+              "surface": "No literal geometric surface — parallels are straight, meridians curve",
+              "graticule": "Parallels are straight horizontal lines, but meridians curve toward the poles",
+              "bestFor": "Whole-world thematic maps showing area distributions",
+              "weakness": "Shape distortion at edges/poles; no literal 'unwrapping' — purely mathematical",
+              "examples": ["Mollweide", "Sinusoidal", "Goode Homolosine", "Eckert IV"],
+              "projectionCount": 4
+            },
+            {
+              "id": "compromise",
+              "icon": "⚖️",
+              "name": "Compromise / Miscellaneous",
+              "color": "#ffb74d",
+              "surface": "No single developable surface — designed by balancing distortions mathematically",
+              "graticule": "Varies — often curved meridians, curved or straight parallels",
+              "bestFor": "General-reference world maps, atlases, wall maps",
+              "weakness": "Doesn't perfectly preserve any single property — a little of everything is distorted",
+              "examples": ["Robinson", "Winkel Tripel", "Natural Earth", "Van der Grinten"],
+              "projectionCount": 3
+            }
+          ]
+        },
+        {
+          "id": "axis-property",
+          "title": "Axis 2 — Preserved Property (What the Projection Protects)",
+          "type": "property-breakdown",
+          "description": "No flat map can preserve everything — each projection must choose what to protect. This is the fundamental trade-off of cartography.",
+          "tradeoff": "It is mathematically impossible for a flat map to simultaneously preserve area AND angles everywhere. A conformal map will exaggerate areas; an equal-area map will distort shapes. This is a theorem, not a limitation of technology.",
+          "properties": [
+            {
+              "id": "conformal",
+              "name": "Conformal (Orthomorphic)",
+              "icon": "📐",
+              "color": "#64b5f6",
+              "preserves": "Local angles and shapes of small features",
+              "distorts": "Area — often severely near poles or map edges",
+              "howToSpot": "Tissot circles remain perfect circles (but grow larger away from the standard lines)",
+              "useCases": ["Marine/air navigation (angles = compass bearings)", "Topographic maps", "Engineering surveys", "Web maps (Mercator)"],
+              "keyProjections": ["Mercator", "Transverse Mercator / UTM", "Lambert Conformal Conic", "Stereographic"]
+            },
+            {
+              "id": "equal-area",
+              "name": "Equal-Area (Equivalent)",
+              "icon": "📊",
+              "color": "#81c784",
+              "preserves": "Area — any region on the map has the correct proportional area relative to the globe",
+              "distorts": "Shape and angle — features may be stretched, compressed, or sheared",
+              "howToSpot": "Tissot ellipses all have the same area (but shapes vary — some are squished, some stretched)",
+              "useCases": ["Thematic/choropleth maps", "Census/population density", "Environmental/land-use mapping", "Any time 'how much' matters more than 'what shape'"],
+              "keyProjections": ["Albers Equal-Area Conic", "Lambert Azimuthal Equal-Area", "Mollweide", "Sinusoidal", "Goode Homolosine"]
+            },
+            {
+              "id": "equidistant",
+              "name": "Equidistant",
+              "icon": "📏",
+              "color": "#ffb74d",
+              "preserves": "True distance from one point (or along specific lines)",
+              "distorts": "Everything else, away from those specific lines or points",
+              "howToSpot": "Distances measured from the center point (or along meridians) are correct; all others are not",
+              "useCases": ["'Distance from here' maps", "Radio/telecom coverage maps", "Airline distance visualizations", "UN emblem"],
+              "keyProjections": ["Azimuthal Equidistant", "Equidistant Conic", "Plate Carrée (equidistant along meridians)"]
+            },
+            {
+              "id": "true-direction",
+              "name": "True-Direction (Azimuthal)",
+              "icon": "🧭",
+              "color": "#4dd0e1",
+              "preserves": "True compass bearing (azimuth) from the center point to every other point",
+              "distorts": "Distance, area, and shape away from center",
+              "howToSpot": "A straight line from the center of the map to any point shows the true great-circle direction",
+              "useCases": ["Azimuthal navigation", "Bearing-critical applications", "Radio direction finding"],
+              "keyProjections": ["Gnomonic (great circles are straight lines)", "Azimuthal Equidistant (also preserves distance from center)"]
+            },
+            {
+              "id": "compromise",
+              "name": "Compromise (Aphylactic)",
+              "icon": "⚖️",
+              "color": "#e0e0e0",
+              "preserves": "A pleasant overall balance — nothing perfectly, but everything reasonably",
+              "distorts": "A little of everything, on purpose",
+              "howToSpot": "Tissot ellipses vary in both size and shape, but nothing is extreme",
+              "useCases": ["General-reference world maps", "Atlases and wall maps", "Educational/classroom maps"],
+              "keyProjections": ["Robinson", "Winkel Tripel (National Geographic since 1998)", "Natural Earth"]
+            }
+          ]
+        },
+        {
+          "id": "axis-aspect",
+          "title": "Axis 3 — Aspect (Orientation of the Projection Surface)",
+          "type": "aspect-diagram",
+          "description": "The aspect describes how the projection surface (cylinder, cone, or plane) is oriented relative to the Earth's polar axis. Changing the aspect rotates where distortion is minimized.",
+          "aspects": [
+            {
+              "id": "normal",
+              "name": "Normal (Equatorial)",
+              "icon": "⬆️",
+              "description": "The axis of the projection surface aligns with the Earth's polar axis. For a cylinder: tangent at the equator. For a cone: axis coincides with Earth's axis. For a plane: centered on a pole.",
+              "bestFor": "Equatorial regions (cylinder), mid-latitudes (cone), polar regions (plane)",
+              "example": "Mercator (normal cylindrical) — equator is the line of zero distortion"
+            },
+            {
+              "id": "transverse",
+              "name": "Transverse",
+              "icon": "➡️",
+              "description": "The axis of the projection surface is rotated 90° — perpendicular to the Earth's polar axis. For a cylinder: tangent along a meridian instead of the equator.",
+              "bestFor": "Narrow north–south strips. This is exactly what UTM does — it wraps a transverse cylinder around each 6°-wide meridional zone.",
+              "example": "Transverse Mercator / UTM — each zone's central meridian is the line of zero distortion"
+            },
+            {
+              "id": "oblique",
+              "name": "Oblique",
+              "icon": "↗️",
+              "description": "The axis is tilted at any angle between normal and transverse. The projection surface touches the globe along a great circle that is neither the equator nor a meridian.",
+              "bestFor": "Regions that don't align with the equator or a meridian — e.g., Italy, Japan, New Zealand, a trans-oceanic flight path",
+              "example": "Oblique Mercator — used for areas like Alaska's panhandle or the Strait of Malacca"
+            }
+          ]
+        },
+        {
+          "id": "cross-classification",
+          "title": "The Cross-Classification Matrix",
+          "type": "matrix",
+          "description": "Any projection can be located in this 3D space: Surface × Property × Aspect. Here's a simplified 2D slice showing Surface Family × Preserved Property, with example projections in each cell.",
+          "rowHeader": "Surface Family",
+          "colHeader": "Preserved Property",
+          "columns": ["Conformal", "Equal-Area", "Equidistant", "Compromise"],
+          "rows": [
+            {
+              "family": "Cylindrical",
+              "cells": [
+                { "projections": ["Mercator", "Transverse Mercator"], "note": "Angles true, area exaggerated" },
+                { "projections": ["Lambert Cyl. EA", "Gall–Peters"], "note": "Area true, shapes squished" },
+                { "projections": ["Plate Carrée"], "note": "Distances true along meridians" },
+                { "projections": ["Miller"], "note": "Less polar distortion than Mercator" }
+              ]
+            },
+            {
+              "family": "Conic",
+              "cells": [
+                { "projections": ["Lambert Conformal Conic"], "note": "Standard for aeronautical charts" },
+                { "projections": ["Albers Equal-Area"], "note": "US Census, USGS thematic maps" },
+                { "projections": ["Equidistant Conic"], "note": "Distances true along meridians" },
+                { "projections": ["—"], "note": "Not commonly used" }
+              ]
+            },
+            {
+              "family": "Azimuthal",
+              "cells": [
+                { "projections": ["Stereographic"], "note": "Polar/hemisphere conformal" },
+                { "projections": ["Lambert Azimuthal EA"], "note": "Polar/hemisphere equal-area" },
+                { "projections": ["Azimuthal Equidistant"], "note": "Distance from center point (UN emblem)" },
+                { "projections": ["Orthographic"], "note": "'Globe view' — perspective from space" }
+              ]
+            },
+            {
+              "family": "Pseudocylindrical",
+              "cells": [
+                { "projections": ["—"], "note": "Not possible by definition" },
+                { "projections": ["Mollweide", "Sinusoidal", "Eckert IV", "Goode Homolosine"], "note": "Whole-world thematic maps" },
+                { "projections": ["—"], "note": "Rare" },
+                { "projections": ["Robinson"], "note": "Often classified as compromise" }
+              ]
+            },
+            {
+              "family": "Compromise",
+              "cells": [
+                { "projections": ["—"], "note": "By definition, compromises don't perfectly preserve any property" },
+                { "projections": ["—"], "note": "" },
+                { "projections": ["—"], "note": "" },
+                { "projections": ["Winkel Tripel", "Natural Earth", "Van der Grinten"], "note": "Balanced world maps" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "surface-deep-dive",
+      "title": "Surface Families — Deep Dive",
+      "icon": "🏗️",
+      "color": "#64b5f6",
+      "sections": [
+        {
+          "id": "tangent-secant",
+          "title": "Tangent vs. Secant Case",
+          "type": "concept-pair",
+          "description": "Every surface family has two 'cases' — how the projection surface touches the globe. This determines where distortion is zero.",
+          "pairs": [
+            {
+              "id": "tangent",
+              "name": "Tangent",
+              "icon": "☝️",
+              "description": "The surface touches the globe along one line (or at one point). Distortion is zero only along that line/point and increases outward.",
+              "details": "Cylinder tangent at equator → 1 standard parallel at 0°. Cone tangent at 45°N → 1 standard parallel. Plane tangent at pole → 1 contact point."
+            },
+            {
+              "id": "secant",
+              "name": "Secant",
+              "icon": "✌️",
+              "description": "The surface cuts through the globe along two lines. Distortion is zero along both lines, resulting in less overall distortion across the mapped region.",
+              "details": "Cylinder secant at 30°N & 30°S → 2 standard parallels. Cone secant at 33°N & 45°N → 2 standard parallels (e.g., Albers for CONUS). This is the real-world default — most practical projections use secant case."
+            }
+          ]
+        },
+        {
+          "id": "light-source",
+          "title": "Projection Light Source (for Azimuthal family)",
+          "type": "concept-list",
+          "description": "For azimuthal projections, the location of the 'light source' determines the mathematical character of the projection.",
+          "items": [
+            { "name": "Gnomonic", "source": "Center of the globe", "special": "Every great circle appears as a straight line — invaluable for plotting shortest paths. Severe distortion beyond ~60° from center.", "icon": "💡" },
+            { "name": "Stereographic", "source": "Antipodal point (opposite side of the globe)", "special": "Conformal — preserves angles everywhere. Can show an entire hemisphere.", "icon": "🔮" },
+            { "name": "Orthographic", "source": "Infinity (parallel rays)", "special": "Looks like viewing a globe from deep space. Only the visible hemisphere is shown.", "icon": "🌍" }
+          ]
+        },
+        {
+          "id": "family-tree-visual",
+          "title": "The Complete Family Tree",
+          "type": "family-tree",
+          "description": "A zoom-out view connecting every major projection family back to the root concept. Each leaf is a specific projection you can explore in The Shelf.",
+          "tree": {
+            "id": "root",
+            "label": "Map Projections",
+            "children": [
+              {
+                "id": "by-surface",
+                "label": "By Developable Surface",
+                "children": [
+                  { "id": "cyl", "label": "Cylindrical", "leaves": ["Mercator", "Transverse Mercator", "UTM", "Plate Carrée", "Lambert Cyl. EA", "Gall–Peters", "Miller"] },
+                  { "id": "con", "label": "Conic", "leaves": ["Lambert Conformal Conic", "Albers Equal-Area", "Equidistant Conic", "Polyconic"] },
+                  { "id": "azi", "label": "Azimuthal", "leaves": ["Stereographic", "Gnomonic", "Orthographic", "Azimuthal Equidistant", "Lambert Azimuthal EA"] },
+                  { "id": "pse", "label": "Pseudocylindrical", "leaves": ["Mollweide", "Sinusoidal", "Eckert IV", "Goode Homolosine"] },
+                  { "id": "misc", "label": "Compromise / Misc.", "leaves": ["Robinson", "Winkel Tripel", "Natural Earth", "Van der Grinten"] }
+                ]
+              },
+              {
+                "id": "by-property",
+                "label": "By Preserved Property",
+                "children": [
+                  { "id": "conf", "label": "Conformal", "leaves": ["Mercator", "Transverse Mercator", "Lambert CC", "Stereographic"] },
+                  { "id": "eqar", "label": "Equal-Area", "leaves": ["Albers", "Lambert Azim. EA", "Mollweide", "Sinusoidal", "Eckert IV"] },
+                  { "id": "eqdi", "label": "Equidistant", "leaves": ["Azimuthal Equidist.", "Equidistant Conic", "Plate Carrée"] },
+                  { "id": "comp", "label": "Compromise", "leaves": ["Robinson", "Winkel Tripel", "Natural Earth"] }
+                ]
+              },
+              {
+                "id": "by-aspect",
+                "label": "By Aspect",
+                "children": [
+                  { "id": "norm", "label": "Normal", "leaves": ["Mercator", "Albers", "Polar Stereographic"] },
+                  { "id": "tran", "label": "Transverse", "leaves": ["Transverse Mercator", "UTM"] },
+                  { "id": "obli", "label": "Oblique", "leaves": ["Oblique Mercator", "Oblique Stereographic"] }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "decision-flowchart",
+      "title": "How to Choose a Projection",
+      "icon": "🧩",
+      "color": "#4dd0e1",
+      "sections": [
+        {
+          "id": "flowchart",
+          "title": "The Decision Flowchart",
+          "type": "flowchart",
+          "description": "Follow this decision tree to narrow down the right projection family and property for your mapping task. This is the logic behind the Mix Station's recipe engine.",
+          "steps": [
+            {
+              "id": "q1",
+              "question": "What is the extent of your map?",
+              "options": [
+                { "label": "Whole world", "next": "q-world" },
+                { "label": "Hemisphere", "next": "q-hemisphere" },
+                { "label": "Continent / large country", "next": "q-continent" },
+                { "label": "Small region / city / site", "next": "q-small" }
+              ]
+            },
+            {
+              "id": "q-world",
+              "question": "What matters most for your world map?",
+              "options": [
+                { "label": "True area (thematic)", "result": "Mollweide, Sinusoidal, Goode Homolosine, Eckert IV" },
+                { "label": "Balanced look (reference)", "result": "Robinson, Winkel Tripel, Natural Earth" },
+                { "label": "Navigation (angles)", "result": "Mercator (but be aware of area distortion)" }
+              ]
+            },
+            {
+              "id": "q-hemisphere",
+              "question": "Which property matters most?",
+              "options": [
+                { "label": "True area", "result": "Lambert Azimuthal Equal-Area" },
+                { "label": "True angles/shape", "result": "Stereographic" },
+                { "label": "'Globe' view look", "result": "Orthographic" }
+              ]
+            },
+            {
+              "id": "q-continent",
+              "question": "What is the latitude / shape of your region?",
+              "options": [
+                { "label": "Mid-latitude, wide E–W", "next": "q-midlat" },
+                { "label": "Polar (Arctic/Antarctic)", "next": "q-polar" },
+                { "label": "Equatorial, wide E–W", "result": "Mercator (conformal) or Lambert Cyl. EA (equal-area)" },
+                { "label": "Narrow N–S strip", "result": "Transverse Mercator / UTM" }
+              ]
+            },
+            {
+              "id": "q-midlat",
+              "question": "What matters most?",
+              "options": [
+                { "label": "True area (census, thematic)", "result": "Albers Equal-Area Conic" },
+                { "label": "True angles (navigation, topo)", "result": "Lambert Conformal Conic" }
+              ]
+            },
+            {
+              "id": "q-polar",
+              "question": "What matters most?",
+              "options": [
+                { "label": "True area (ice extent, environment)", "result": "Lambert Azimuthal Equal-Area, polar aspect" },
+                { "label": "True angles (navigation)", "result": "Polar Stereographic" }
+              ]
+            },
+            {
+              "id": "q-small",
+              "question": "Small region — what's the purpose?",
+              "options": [
+                { "label": "Engineering / survey / topographic", "result": "Transverse Mercator / UTM (conformal, <6° wide)" },
+                { "label": "Thematic / equal-area analysis", "result": "Lambert Azimuthal Equal-Area centered on region" },
+                { "label": "'Distance from here' map", "result": "Azimuthal Equidistant centered on your point" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "common-mistakes",
+      "title": "Common Mistakes & Myths",
+      "icon": "⚠️",
+      "color": "#ef5350",
+      "sections": [
+        {
+          "id": "mistakes-list",
+          "title": "Pitfalls to Avoid",
+          "type": "mistakes",
+          "items": [
+            {
+              "myth": "UTM is an equal-area projection",
+              "truth": "UTM is a Transverse Mercator variant — it's conformal (preserves angles), not equal-area. It inherits Mercator's angle-preserving property, just rotated so the tangent line runs along a meridian instead of the equator.",
+              "icon": "❌"
+            },
+            {
+              "myth": "Mercator makes Africa look small",
+              "truth": "Mercator makes high-latitude areas look too BIG (Greenland appears as large as Africa). Africa is actually 14× larger than Greenland. Mercator is conformal — it exaggerates area at high latitudes to preserve angles.",
+              "icon": "❌"
+            },
+            {
+              "myth": "There's one 'best' projection",
+              "truth": "There is no universal best projection. Each projection is a deliberate trade-off. The 'best' depends entirely on your map's purpose, extent, and location. That's why this portal has a Mix Station.",
+              "icon": "❌"
+            },
+            {
+              "myth": "Projections physically unwrap a surface",
+              "truth": "The 'developable surface' (cylinder, cone, plane) is a conceptual/pedagogical model, not a physical process. Most projections are defined by mathematical formulas. The surface metaphor helps you understand the pattern of distortion, but the math doesn't require a literal cone or cylinder.",
+              "icon": "❌"
+            },
+            {
+              "myth": "WGS 84 is a projection",
+              "truth": "WGS 84 (EPSG:4326) is a Geographic Coordinate System — it defines the datum and ellipsoid. It's unprojected. Data in WGS 84 is in degrees of latitude/longitude on the 3D ellipsoid. To show it on a flat screen, your software applies a projection (often Plate Carrée or Web Mercator) on the fly.",
+              "icon": "❌"
+            },
+            {
+              "myth": "Equal-area and equidistant mean the same thing",
+              "truth": "They are completely different properties. Equal-area preserves the relative size of regions. Equidistant preserves true distance from a specific point or along specific lines. A map can be one or the other, but not both everywhere.",
+              "icon": "❌"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "glossary",
+      "title": "Glossary & Quick Reference",
+      "icon": "📚",
+      "color": "#ffb74d",
+      "sections": [
+        {
+          "id": "glossary-terms",
+          "title": "Key Terms",
+          "type": "glossary",
+          "terms": [
+            { "term": "Datum", "definition": "A reference framework that defines the size and shape of the Earth's ellipsoid and its position relative to the Earth's center. Examples: WGS 84, NAD 83, ED 50." },
+            { "term": "Ellipsoid (Spheroid)", "definition": "A mathematical surface approximating the Earth's shape. Slightly flattened at the poles. Different datums may use different ellipsoids." },
+            { "term": "EPSG Code", "definition": "A unique integer identifier for a specific coordinate system, maintained by the European Petroleum Survey Group (now IOGP). Example: EPSG:4326 = WGS 84 (geographic), EPSG:3857 = Web Mercator (projected)." },
+            { "term": "Graticule", "definition": "The grid of parallels (latitude lines) and meridians (longitude lines) drawn on a map." },
+            { "term": "Great Circle", "definition": "The largest circle that can be drawn on a sphere, representing the shortest path between two points on the globe." },
+            { "term": "Map Projection", "definition": "A systematic mathematical transformation that converts locations on the 3D Earth surface to positions on a 2D flat surface (a map)." },
+            { "term": "Standard Parallel / Standard Line", "definition": "The line(s) where the projection surface touches (tangent) or cuts through (secant) the globe. Distortion is zero along these lines." },
+            { "term": "Tissot's Indicatrix", "definition": "A visualization tool: infinitely small circles on the globe are projected onto the map, showing how the projection distorts area, shape, and angles at each point. On a conformal map, they stay circular (but vary in size). On an equal-area map, they all have the same area (but may be stretched)." },
+            { "term": "WKID", "definition": "Well-Known ID — ESRI's equivalent of EPSG codes for identifying coordinate systems." },
+            { "term": "Projection on the Fly", "definition": "The ability of GIS software to temporarily reproject layers from their native coordinate system into the map frame's coordinate system for display, without permanently altering the source data." },
+            { "term": "Central Meridian", "definition": "The meridian at the center of a map projection, often the line of zero distortion for cylindrical projections." },
+            { "term": "False Easting / Northing", "definition": "Constants added to projected x/y coordinates to avoid negative values. UTM adds 500,000m false easting so all coordinates in a zone are positive." },
+            { "term": "Developable Surface", "definition": "A geometric shape (cylinder, cone, plane) that can be 'unrolled' into a flat surface without stretching. The conceptual basis for classifying projection families." },
+            { "term": "Conformal", "definition": "A map property that preserves local angles and shapes. Meridians and parallels cross at right angles everywhere." },
+            { "term": "Equal-Area (Equivalent)", "definition": "A map property that preserves the proportional area of regions. A country that is 2% of the world on the globe is 2% of the world on the map." },
+            { "term": "Aphylactic", "definition": "Neither conformal nor equal-area — a compromise projection that balances multiple types of distortion." }
+          ]
+        }
+      ]
+    }
+  ]
+}

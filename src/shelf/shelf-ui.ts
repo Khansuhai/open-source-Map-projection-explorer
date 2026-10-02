@@ -13,6 +13,7 @@ import { renderMap } from '../projections/map-renderer';
 import { getProjectionFactory } from '../projections/projection-registry';
 import { renderMixStation } from '../recipe/mix-station-ui';
 import { renderDistortionLab } from '../distortion/distortion-lab-ui';
+import { renderBridgeCourse } from '../bridge/bridge-course-ui';
 
 // ── State ────────────────────────────────────────────────────
 let currentFamily: FamilyId | 'all' = 'all';
@@ -76,6 +77,9 @@ function buildShellHTML(): string {
           </button>
           <button type="button" class="site-nav-btn" data-view="lab">
             <span class="nav-tab-icon">🔬</span> Distortion Lab
+          </button>
+          <button type="button" class="site-nav-btn" data-view="bridge">
+            <span class="nav-tab-icon">🎓</span> Bridge Course
           </button>
         </nav>
 
@@ -159,6 +163,9 @@ function buildShellHTML(): string {
 
       <!-- ── View 3: Distortion Lab (Phase 3) ── -->
       <div id="view-lab" class="main-view-container" style="display: none;"></div>
+
+      <!-- ── View 4: Bridge Course (Phase 4) ── -->
+      <div id="view-bridge" class="main-view-container" style="display: none;"></div>
     </main>
 
     <!-- Detail overlay -->
@@ -340,15 +347,19 @@ function bindFilterEvents(): void {
     const shelfContainer = document.getElementById('view-shelf')!;
     const mixContainer = document.getElementById('view-mix')!;
     const labContainer = document.getElementById('view-lab')!;
+    const bridgeContainer = document.getElementById('view-bridge')!;
 
     shelfContainer.style.display = view === 'shelf' ? 'block' : 'none';
     mixContainer.style.display = view === 'mix' ? 'block' : 'none';
     labContainer.style.display = view === 'lab' ? 'block' : 'none';
+    bridgeContainer.style.display = view === 'bridge' ? 'block' : 'none';
 
     if (view === 'mix') {
       renderMixStation(mixContainer);
     } else if (view === 'lab') {
       renderDistortionLab(labContainer);
+    } else if (view === 'bridge') {
+      renderBridgeCourse(bridgeContainer);
     }
   });
 }

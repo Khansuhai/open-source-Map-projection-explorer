@@ -1716,3 +1716,1323 @@ body::before {
   }
 }
 
+/* ================================================================
+   Phase 4: Bridge Course Styles
+   An interactive educational guide — chapter nav, trees,
+   taxonomy cards, flowcharts, glossary, etc.
+   ================================================================ */
+
+/* ── Bridge Course Layout ─────────────────────────────────── */
+.bridge-course {
+  min-height: calc(100vh - var(--header-height));
+}
+
+.bridge-header {
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: linear-gradient(180deg, rgba(129, 199, 132, 0.06) 0%, transparent 100%);
+}
+
+.bridge-header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.bridge-title-area h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-text-heading);
+  letter-spacing: -0.02em;
+}
+
+.bridge-subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.bridge-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.bridge-progress-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+.bridge-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--color-surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bridge-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #81c784, #4caf50);
+  border-radius: 4px;
+  transition: width var(--transition-slow);
+}
+
+.bridge-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: calc(100vh - var(--header-height) - 100px);
+}
+
+/* ── Chapter Navigation Sidebar ───────────────────────────── */
+.bridge-nav {
+  padding: 20px 16px;
+  border-right: var(--border-subtle);
+  background: rgba(15, 20, 32, 0.4);
+  position: sticky;
+  top: var(--header-height);
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface) transparent;
+}
+
+.bridge-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+.bridge-nav-item:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.bridge-nav-item--active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--ch-color, var(--color-accent));
+  box-shadow: inset 3px 0 0 var(--ch-color, var(--color-accent));
+}
+
+.bridge-nav-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.bridge-nav-label {
+  flex: 1;
+  line-height: 1.3;
+}
+
+.bridge-nav-arrow {
+  font-size: 1rem;
+  color: var(--color-text-dim);
+  transition: transform var(--transition-fast);
+}
+
+.bridge-nav-item--active .bridge-nav-arrow {
+  color: var(--ch-color, var(--color-accent));
+}
+
+.bridge-nav-refs {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.bridge-nav-refs h4 {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  margin-bottom: 10px;
+}
+
+.bridge-nav-refs ul {
+  list-style: none;
+  padding: 0;
+}
+
+.bridge-ref {
+  font-size: 0.68rem;
+  color: var(--color-text-dim);
+  padding: 4px 0;
+  line-height: 1.4;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.03);
+}
+
+/* ── Chapter Content Area ─────────────────────────────────── */
+.bridge-content {
+  padding: 32px 40px;
+  overflow-y: auto;
+  max-height: calc(100vh - var(--header-height));
+}
+
+.bridge-chapter-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--ch-color, var(--color-accent));
+}
+
+.bridge-chapter-icon {
+  font-size: 2.4rem;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+.bridge-chapter-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text-heading);
+  background: linear-gradient(135deg, #fff 30%, var(--ch-color, var(--color-accent)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Sections ─────────────────────────────────────────────── */
+.bridge-section {
+  margin-bottom: 40px;
+}
+
+.bridge-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-heading);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.bridge-section-desc {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 800px;
+}
+
+/* ── Guide Cards (How to Use Portal) ──────────────────────── */
+.guide-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.guide-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.guide-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--guide-accent, var(--color-accent));
+  opacity: 0.7;
+}
+
+.guide-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.guide-card-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.guide-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--guide-accent, var(--color-accent));
+  margin-bottom: 8px;
+}
+
+.guide-card-desc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ── Steps Timeline ───────────────────────────────────────── */
+.steps-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: 32px;
+}
+
+.steps-timeline::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 24px;
+  bottom: 24px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--color-accent), rgba(124, 140, 245, 0.15));
+  border-radius: 2px;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 16px 0;
+  position: relative;
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 2px 12px rgba(124, 140, 245, 0.35);
+}
+
+.step-body {
+  flex: 1;
+  padding-top: 6px;
+}
+
+.step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.step-detail {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ── Interactive Tree Diagram ─────────────────────────────── */
+.tree-container {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  backdrop-filter: blur(12px);
+}
+
+.tree-node {
+  margin-left: 0;
+  margin-bottom: 2px;
+}
+
+.tree-depth-1 { margin-left: 20px; }
+.tree-depth-2 { margin-left: 40px; }
+.tree-depth-3 { margin-left: 60px; }
+.tree-depth-4 { margin-left: 80px; }
+
+.tree-node-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.tree-node--expandable {
+  cursor: pointer;
+}
+
+.tree-node--expandable:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tree-expand-icon {
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  width: 16px;
+  text-align: center;
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.tree-expand-icon--open {
+  color: #81c784;
+}
+
+.tree-leaf-dot {
+  width: 16px;
+  text-align: center;
+  color: var(--color-text-dim);
+  flex-shrink: 0;
+}
+
+.tree-node-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.tree-node-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.tree-node-desc {
+  font-size: 0.76rem;
+  color: var(--color-text-dim);
+  margin-left: 40px;
+  padding: 0 12px 6px;
+  line-height: 1.4;
+}
+
+.tree-node--highlight > .tree-node-header {
+  background: rgba(129, 199, 132, 0.1);
+  border: 1px solid rgba(129, 199, 132, 0.2);
+}
+
+.tree-node--highlight .tree-node-label {
+  color: #81c784;
+}
+
+.tree-children--hidden {
+  display: none;
+}
+
+.tree-children--visible {
+  display: block;
+  animation: treeSlideIn 0.25s ease-out;
+}
+
+@keyframes treeSlideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Callout Boxes ────────────────────────────────────────── */
+.bridge-callout {
+  display: flex;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+}
+
+.bridge-callout--important {
+  background: rgba(124, 140, 245, 0.08);
+  border: 1px solid rgba(124, 140, 245, 0.2);
+}
+
+.bridge-callout--tip {
+  background: rgba(129, 199, 132, 0.08);
+  border: 1px solid rgba(129, 199, 132, 0.2);
+}
+
+.bridge-callout--warning {
+  background: rgba(255, 183, 77, 0.08);
+  border: 1px solid rgba(255, 183, 77, 0.2);
+}
+
+.bridge-callout--note {
+  background: rgba(77, 208, 225, 0.08);
+  border: 1px solid rgba(77, 208, 225, 0.2);
+}
+
+.callout-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.callout-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-heading);
+  margin-bottom: 6px;
+}
+
+.callout-text {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* ── Comparison Table ─────────────────────────────────────── */
+.bridge-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+}
+
+.bridge-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.bridge-table th {
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-heading);
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.bridge-table td {
+  padding: 12px 18px;
+  color: var(--color-text);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  vertical-align: top;
+}
+
+.bridge-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table-label-cell {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ── Taxonomy Cards (Surface Family) ──────────────────────── */
+.taxonomy-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.taxonomy-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.taxonomy-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-card);
+}
+
+.taxonomy-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.taxonomy-icon {
+  font-size: 1.6rem;
+}
+
+.taxonomy-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--tax-color, var(--color-text-heading));
+  flex: 1;
+}
+
+.taxonomy-count {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-dim);
+}
+
+.taxonomy-card-body {
+  padding: 20px 24px;
+  display: grid;
+  gap: 12px;
+}
+
+.taxonomy-field {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+
+.taxonomy-field-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  padding-top: 2px;
+}
+
+.taxonomy-field-value {
+  font-size: 0.82rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.taxonomy-field--highlight {
+  color: #81c784;
+}
+
+.taxonomy-field--warning {
+  color: #ffb74d;
+}
+
+.taxonomy-examples {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 8px;
+  align-items: start;
+}
+
+.taxonomy-example-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.taxonomy-tag {
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--tax-color, var(--color-text));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── Property Breakdown Cards ─────────────────────────────── */
+.property-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.property-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.property-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.property-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.property-icon {
+  font-size: 1.5rem;
+}
+
+.property-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--prop-color, var(--color-text-heading));
+}
+
+.property-card-body {
+  padding: 20px 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.property-field {
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+}
+
+.property-field--preserves {
+  border-left: 3px solid #81c784;
+}
+
+.property-field--distorts {
+  border-left: 3px solid #ffb74d;
+}
+
+.property-field-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  margin-bottom: 4px;
+}
+
+.property-field p {
+  font-size: 0.82rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.property-use-cases ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.property-use-cases li {
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.property-proj-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.property-proj-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(124, 140, 245, 0.1);
+  color: var(--prop-color, var(--color-accent));
+  border: 1px solid rgba(124, 140, 245, 0.15);
+}
+
+/* ── Aspect Cards ─────────────────────────────────────────── */
+.aspect-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.aspect-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all var(--transition-normal);
+}
+
+.aspect-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.aspect-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.aspect-icon {
+  font-size: 1.6rem;
+}
+
+.aspect-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-heading);
+}
+
+.aspect-desc {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.aspect-best-for,
+.aspect-example {
+  font-size: 0.78rem;
+  color: var(--color-text);
+  line-height: 1.5;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+}
+
+.aspect-best-for strong,
+.aspect-example strong {
+  color: var(--color-text-muted);
+}
+
+/* ── Cross-Classification Matrix ──────────────────────────── */
+.matrix-table-wrap {
+  overflow-x: auto;
+}
+
+.matrix-table th,
+.matrix-table td {
+  min-width: 140px;
+}
+
+.matrix-corner {
+  font-size: 0.7rem !important;
+  color: var(--color-text-dim) !important;
+  letter-spacing: 0.02em;
+}
+
+.matrix-row-header {
+  font-weight: 700 !important;
+  color: var(--color-text-heading) !important;
+  white-space: nowrap;
+}
+
+.matrix-cell {
+  vertical-align: top;
+}
+
+.matrix-projs {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 4px;
+}
+
+.matrix-note {
+  font-size: 0.7rem;
+  color: var(--color-text-dim);
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* ── Concept Pair (Tangent vs Secant) ─────────────────────── */
+.concept-pair-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.concept-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all var(--transition-normal);
+}
+
+.concept-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.concept-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.concept-card-header h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-heading);
+}
+
+.concept-icon {
+  font-size: 1.5rem;
+}
+
+.concept-desc {
+  font-size: 0.85rem;
+  color: var(--color-text);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.concept-details {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-accent);
+}
+
+/* ── Concept List (Light Sources) ─────────────────────────── */
+.concept-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.concept-list-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-normal);
+}
+
+.concept-list-item:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.concept-list-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.concept-list-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-heading);
+  margin-bottom: 4px;
+}
+
+.concept-list-source {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.concept-list-special {
+  font-size: 0.82rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+/* ── Family Tree Diagram ──────────────────────────────────── */
+.family-tree-diagram {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  overflow-x: auto;
+}
+
+.ft-root {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.ft-root-label {
+  display: inline-block;
+  padding: 12px 32px;
+  background: var(--gradient-primary);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.ft-branches {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ft-branch {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+}
+
+.ft-branch-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ft-branch-children {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.ft-child {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.ft-child-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.ft-leaves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ft-leaf {
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: rgba(124, 140, 245, 0.1);
+  color: var(--color-text-muted);
+  border: 1px solid rgba(124, 140, 245, 0.1);
+}
+
+/* ── Decision Flowchart ───────────────────────────────────── */
+.flowchart-container {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+}
+
+.flowchart-step {
+  text-align: center;
+}
+
+.flowchart-question {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.flowchart-q-icon {
+  font-size: 1.6rem;
+}
+
+.flowchart-question h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-heading);
+}
+
+.flowchart-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.flowchart-option-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+  text-align: left;
+  color: var(--color-text);
+}
+
+.flowchart-option-btn:hover {
+  background: rgba(124, 140, 245, 0.08);
+  border-color: var(--color-accent);
+  transform: translateX(4px);
+}
+
+.flowchart-option-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.flowchart-option-result {
+  font-size: 0.75rem;
+  color: #81c784;
+  font-family: var(--font-mono);
+  text-align: right;
+  flex-shrink: 0;
+  max-width: 50%;
+}
+
+.flowchart-option-arrow {
+  font-size: 1rem;
+  color: var(--color-accent);
+}
+
+.flowchart-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+  padding: 10px 20px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.flowchart-back-btn:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.flowchart-breadcrumb {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.flowchart-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.flowchart-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.flowchart-dot--active {
+  background: var(--color-accent);
+  box-shadow: 0 0 8px rgba(124, 140, 245, 0.4);
+}
+
+/* ── Mistakes / Myths ─────────────────────────────────────── */
+.mistakes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mistake-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  transition: all var(--transition-normal);
+}
+
+.mistake-card:hover {
+  border-color: rgba(239, 83, 80, 0.2);
+}
+
+.mistake-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.mistake-icon {
+  font-size: 1.3rem;
+}
+
+.mistake-myth {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ef5350;
+}
+
+.mistake-truth {
+  padding: 12px 16px;
+  background: rgba(129, 199, 132, 0.06);
+  border: 1px solid rgba(129, 199, 132, 0.15);
+  border-radius: var(--radius-md);
+}
+
+.truth-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #81c784;
+  margin-bottom: 4px;
+}
+
+.mistake-truth p {
+  font-size: 0.82rem;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* ── Glossary ─────────────────────────────────────────────── */
+.glossary-search-wrap {
+  margin-bottom: 20px;
+}
+
+.glossary-search {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 16px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.glossary-search::placeholder {
+  color: var(--color-text-dim);
+}
+
+.glossary-search:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(124, 140, 245, 0.15);
+}
+
+.glossary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.glossary-item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background var(--transition-fast);
+}
+
+.glossary-item:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.glossary-term {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.glossary-def {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.glossary-empty {
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+  text-align: center;
+  padding: 32px;
+}
+
+/* ── Bridge Course Responsive ─────────────────────────────── */
+@media (max-width: 900px) {
+  .bridge-layout {
+    grid-template-columns: 1fr;
+  }
+  .bridge-nav {
+    position: relative;
+    top: 0;
+    height: auto;
+    max-height: 200px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 12px;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: var(--border-subtle);
+  }
+  .bridge-nav-item {
+    flex-shrink: 0;
+    padding: 8px 12px;
+  }
+  .bridge-nav-refs {
+    display: none;
+  }
+  .bridge-content {
+    padding: 20px 16px;
+    max-height: none;
+  }
+  .taxonomy-field {
+    grid-template-columns: 1fr;
+  }
+  .taxonomy-examples {
+    grid-template-columns: 1fr;
+  }
+  .glossary-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .ft-branch-children {
+    grid-template-columns: 1fr;
+  }
+  .bridge-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
